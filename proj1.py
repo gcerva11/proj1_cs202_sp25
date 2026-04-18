@@ -1,12 +1,12 @@
 from dataclasses import dataclass
-
+import math import pi, sin
 #complete your tasks in this file
 @dataclass (frozen=True)
 class GlobeRect:
-lo_lat: float
-hi_lat: float
-west_long: float
-east_long: float
+    lo_lat: float
+    hi_lat: float
+    west_long: float
+    east_long: float
 
 @dataclass (frozen=True)
 class Region:
@@ -36,7 +36,7 @@ San_Francisco = RegionCondition(
     ),
     year = 2025,
     pop = 840000,
-    ghg_rate = 0.0
+    ghg_rate = (840000 * 5)
 )
 
 London = RegionCondition(
@@ -51,8 +51,8 @@ London = RegionCondition(
         terrain = "other"
     ),
     year = 2025,
-    pop = 10000000,
-    ghg_rate = 0.0
+    pop = 9000000,
+    ghg_rate = (9000000 * 5)
 )
 
 Mediterranean_Sea = RegionCondition(
@@ -83,8 +83,45 @@ slo_county = RegionCondition(
         terrain = "other"
     ),
     year = 2025,
-    pop = 300000,
-    ghg_rate = 0.0
+    pop = 280000,
+    ghg_rate = (280000 * 5)
 )
 
+def emissions_per_capita(rc: RegionCondition) -> float:
+    if rc.pop == 0:
+        return 0.0
+    else: 
+        return rc.ghg_rate / rc.pop 
 
+def area(gr: GlobeRect) -> float:
+    R = 6378.1 
+    lambda1 = gr.west_long * (pi/180)
+    lambda2 = gr.east_long * (pi/180)
+    phi1 = gr.lo_lat * (pi/180)
+    phi2 = gr.hi_lat * (pi/180)
+    
+    long_difference = lambda2 - lambda1
+    if long_difference < 0:
+        long_difference = long_difference + (2*pi)
+    
+    return ((R **2) * abs(long_difference) * abs(sin(phi2) - sin(phi1)))
+
+
+def emissions_per_square_km(rc: RegionCondition) -> float:
+    region_area = area(rc.region.rect)
+    #per square km ?
+    if region_area == 0:
+        return 0.0
+    return rc.ghg_rate / region_area
+#co2 equivalent per square kilometer
+
+def densest(lst:list[int]])-> str:
+if index == len(lst - 1)
+    return lst[index]
+
+else:
+    max_of_rest = find_max_recursive(lst, index+1)
+    if lst[index] > max_of_rest:
+        return lst[insex]
+    else:
+        return max_of_rest
