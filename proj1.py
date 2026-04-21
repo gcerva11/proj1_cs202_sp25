@@ -1,5 +1,11 @@
 from dataclasses import dataclass
-import math import pi, sin
+import sys
+import unittest
+from math import pi, sin
+from typing import *
+from dataclasses import dataclass
+
+sys.setrecursionlimit(10**6)
 #complete your tasks in this file
 @dataclass (frozen=True)
 class GlobeRect:
@@ -12,7 +18,7 @@ class GlobeRect:
 class Region:
     rect: GlobeRect
     name: str
-    terrain: "ocean" | "mountains" | "forest" | "other"
+    terrain: str
 
 @dataclass (frozen=True)
 class RegionCondition:
@@ -87,6 +93,8 @@ slo_county = RegionCondition(
     ghg_rate = (280000 * 5)
 )
 
+region_conditions = [San_Francisco, London, Mediterranean_Sea, slo_county]
+
 def emissions_per_capita(rc: RegionCondition) -> float:
     if rc.pop == 0:
         return 0.0
@@ -115,13 +123,48 @@ def emissions_per_square_km(rc: RegionCondition) -> float:
     return rc.ghg_rate / region_area
 #co2 equivalent per square kilometer
 
-def densest(lst:list[int]])-> str:
-if index == len(lst - 1)
-    return lst[index]
+def pop_density(rc: RegionCondition)-> float:
+    region_area = area(rc.region.rect)
+    if region_area == 0:
+         return 0.0
+    return rc.pop / region_area
 
-else:
-    max_of_rest = find_max_recursive(lst, index+1)
-    if lst[index] > max_of_rest:
-        return lst[insex]
+def densest(lst: list[RegionCondition])->str:
+    return densest_rc(lst).region.name
+
+def densest_rc(lst: list[RegionCondition])-> RegionCondition:
+    if len(lst) == 1:
+        return lst[0]
+    
+    restofthem = densest_rc(lst[1:])
+
+    if pop_density(lst[0]) >= pop_density(restofthem):
+        return lst[0]
     else:
-        return max_of_rest
+        return restofthem
+
+def project_condition(rc: RegionCondition, years: int)-> RegionCondition:
+    new_pop = int(rc.pop * ((1+pop_growth(rc.region)) ** years))
+
+    if rc.pop == 0:
+        new_ghg_rate = 0.0
+    else: 
+        new_ghg_rate = rc.ghg_rate * (new_pop / rc.pop)
+
+    return RegionCondition(
+        region =rc.region, 
+        year = rc.year + years, 
+        pop = new_pop, 
+        ghg_rate = new_ghg_rate
+        )
+
+def pop_growth(r:Region)->float:
+    if r.terrain == "ocean":
+        return 0.0001
+    elif r.terrain == "mountains":
+        return 0.0005
+    elif r.terrain == "forest":
+        return -0.00001
+    else: 
+       return 0.0003
+    

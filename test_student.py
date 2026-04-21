@@ -20,5 +20,9 @@ def test_emissions_per_square_km(self)->None:
 def test_dataset(self)->None:
     pass
 
+def project_condition(rc, years)->None:
+    pass
+
+
 if __name__ == '__main__':
     unittest.main()
